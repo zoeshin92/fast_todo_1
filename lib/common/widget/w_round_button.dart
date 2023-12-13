@@ -61,7 +61,7 @@ class RoundButton extends StatefulWidget {
       Key? key})
       : shadowColor = shadowColor ?? theme?.shadowColor ?? Colors.transparent,
         textColor = textColor ?? theme?.textColor ?? Colors.white,
-        bgColor = bgColor ?? theme?.bgColor ?? AppColors.blue,
+        bgColor = bgColor ?? theme?.bgColor ?? AppColors.darkOrange,
         borderColor = borderColor ?? theme?.borderColor ?? Colors.transparent,
         super(key: key);
 
@@ -86,7 +86,8 @@ class RoundButtonState extends State<RoundButton> with RefreshEverySecond {
   @override
   Widget build(BuildContext context) {
     Color color = widget.isEnabled ? (widget.bgColor) : disabledBgColor;
-    Color currentTextColor = widget.isEnabled ? widget.textColor : disabledTextColor;
+    Color currentTextColor =
+        widget.isEnabled ? widget.textColor : disabledTextColor;
     Color borderColor = widget.borderColor;
     Color shadowColor = widget.shadowColor;
     var finalWidth = widget.wrapContent ? null : widget.width;
@@ -142,19 +143,24 @@ class RoundButtonState extends State<RoundButton> with RefreshEverySecond {
             height: widget.height,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(widget.borderRadius ?? widget.height / 2),
+              borderRadius: BorderRadius.circular(
+                  widget.borderRadius ?? widget.height / 2),
               border: Border.all(width: 1, color: borderColor),
               shape: BoxShape.rectangle,
               boxShadow: [
                 BoxShadow(
-                    color: shadowColor, offset: const Offset(0, 3), blurRadius: 6, spreadRadius: 0)
+                    color: shadowColor,
+                    offset: const Offset(0, 3),
+                    blurRadius: 6,
+                    spreadRadius: 0)
               ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (widget.leftWidget != null && !widget.leftWidgetOnStack) widget.leftWidget!,
+                if (widget.leftWidget != null && !widget.leftWidgetOnStack)
+                  widget.leftWidget!,
                 Text(
                   widget.text,
                   textAlign: widget.textAlign,
