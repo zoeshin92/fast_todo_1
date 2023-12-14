@@ -8,4 +8,8 @@ class TodoDataNotifier extends ValueNotifier<List<Todo>> {
     value.add(todo);
     notifyListeners();
   }
+
+  void notify() {
+    notifyListeners();
+  }
 }

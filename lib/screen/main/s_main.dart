@@ -56,15 +56,24 @@ class MainScreenState extends State<MainScreen>
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             final result = await WriteTodoDialog().show();
-            if (result != null) {
-              TodoDataHolder.of(context).notifier.addTodo(
-                    Todo(
-                      id: DateTime.now().microsecondsSinceEpoch,
-                      title: result.text,
-                      dueDate: result.dateTime,
-                    ),
-                  );
+            if (result != null && mounted) {
+              context.todoHolder.notifier.addTodo(
+                Todo(
+                  id: DateTime.now().microsecondsSinceEpoch,
+                  title: result.text,
+                  dueDate: result.dateTime,
+                ),
+              );
             }
+            // if (result != null && mounted) {
+            //   TodoDataHolder.of(context).notifier.addTodo(
+            //         Todo(
+            //           id: DateTime.now().microsecondsSinceEpoch,
+            //           title: result.text,
+            //           dueDate: result.dateTime,
+            //         ),
+            //       );
+            // }
           },
           child: const Icon(EvaIcons.plus),
         ),

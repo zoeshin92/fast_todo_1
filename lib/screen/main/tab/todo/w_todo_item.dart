@@ -13,21 +13,32 @@ class TodoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RoundedContainer(
-      child: Column(
-        children: [
-          todo.dueDate.formattedDate.text.make(),
-          Row(
-            children: [
-              TodoStatusWidget(todo),
-              Expanded(child: todo.title.text.size(20).medium.make()),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(EvaIcons.editOutline),
-              )
-            ],
-          ),
-        ],
+    return Dismissible(
+      key: ValueKey(todo.id),
+      onDismissed: (direction) {
+        context.todoHolder.removeTodo(todo);
+      },
+      child: RoundedContainer(
+        margin: const EdgeInsets.only(bottom: 6),
+        color: context.appColors.removeTodoBg,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            todo.dueDate.formattedDate.text.make(),
+            Row(
+              children: [
+                TodoStatusWidget(todo),
+                Expanded(child: todo.title.text.size(20).medium.make()),
+                IconButton(
+                  onPressed: () async {
+                    context.todoHolder.editTodo(todo);
+                  },
+                  icon: const Icon(EvaIcons.editOutline),
+                )
+              ],
+            ),
+          ],
+        ).pOnly(top: 15, right: 15, left: 5, bottom: 10),
       ),
     );
   }
