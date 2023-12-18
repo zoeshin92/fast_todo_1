@@ -1,22 +1,20 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:fast_app_base/data/memory/todo_data_holder.dart';
-import 'package:fast_app_base/data/memory/vo/vo_todo.dart';
 import 'package:fast_app_base/screen/main/tab/tab_item.dart';
 import 'package:fast_app_base/screen/main/tab/tab_navigator.dart';
-import 'package:fast_app_base/screen/main/write/d_write_todo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../common/common.dart';
 import 'w_menu_drawer.dart';
 
-class MainScreen extends StatefulWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => MainScreenState();
+  ConsumerState<MainScreen> createState() => MainScreenState();
 }
 
-class MainScreenState extends State<MainScreen>
+class MainScreenState extends ConsumerState<MainScreen>
     with SingleTickerProviderStateMixin {
   TabItem _currentTab = TabItem.todo;
   final tabs = [TabItem.todo, TabItem.search];
@@ -55,25 +53,7 @@ class MainScreenState extends State<MainScreen>
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            final result = await WriteTodoDialog().show();
-            if (result != null && mounted) {
-              context.todoHolder.notifier.addTodo(
-                Todo(
-                  id: DateTime.now().microsecondsSinceEpoch,
-                  title: result.text,
-                  dueDate: result.dateTime,
-                ),
-              );
-            }
-            // if (result != null && mounted) {
-            //   TodoDataHolder.of(context).notifier.addTodo(
-            //         Todo(
-            //           id: DateTime.now().microsecondsSinceEpoch,
-            //           title: result.text,
-            //           dueDate: result.dateTime,
-            //         ),
-            //       );
-            // }
+            ref.readTodoHolder.addTodo();
           },
           child: const Icon(EvaIcons.plus),
         ),

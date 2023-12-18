@@ -1,61 +1,40 @@
-import 'package:fast_app_base/common/common.dart';
-import 'package:fast_app_base/data/memory/todo_data_notifier.dart';
 import 'package:fast_app_base/data/memory/todo_status.dart';
 import 'package:fast_app_base/data/memory/vo/vo_todo.dart';
 import 'package:fast_app_base/screen/dialog/d_confirm.dart';
 import 'package:fast_app_base/screen/main/write/d_write_todo.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TodoDataHolder extends InheritedWidget {
-  final TodoDataNotifier notifier;
+final todoDataProvider = StateNotifierProvider<TodoDataHolder, List<Todo>>(
+    (ref) => TodoDataHolder());
 
-  const TodoDataHolder(
-      {super.key, required super.child, required this.notifier});
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return true;
-  }
-  // -> app.dart의 MaterialApp을 TodoDataHolder로 감싼다.
-
-  static TodoDataHolder _of(BuildContext context) {
-    TodoDataHolder inherited =
-        context.dependOnInheritedWidgetOfExactType<TodoDataHolder>()!;
-    return inherited;
-  }
+class TodoDataHolder extends StateNotifier<List<Todo>> {
+  TodoDataHolder() : super([]);
 
   void changeTodoStatus(Todo todo) async {
-    TodoStatus nextStatus = todo.status;
     switch (todo.status) {
       case TodoStatus.complete:
         final result = await ConfirmDialog('다시 처음 상태로 변경하시겠어요?').show();
-        if (result?.isFailure == true) {
-          return;
-        }
         result?.runIfSuccess((data) {
-          nextStatus = TodoStatus.incomplete;
+          todo.status = TodoStatus.incomplete;
         });
       case TodoStatus.incomplete:
-        nextStatus = TodoStatus.ongoing;
+        todo.status = TodoStatus.ongoing;
       case TodoStatus.ongoing:
-        nextStatus = TodoStatus.complete;
-      // case TodoStatus.unknown:
-      //   return;
+        todo.status = TodoStatus.complete;
     }
-    // final Todo todoForSave = todo.copyWith(status: nextStatus);
-    // final responseResult = await todoRepository.updateTodo(todoForSave); //객체 안의 status 바꿔서 update요청
-    // processResponseResult(responseResult, todoForSave);
+    state = List.of(state);
   }
 
-  void addTodo(BuildContext context) async {
+  void addTodo() async {
     final result = await WriteTodoDialog().show();
     if (result != null) {
-      notifier.addTodo(
+      state.add(
         Todo(
             id: DateTime.now().microsecondsSinceEpoch,
             title: result.text,
             dueDate: result.dateTime),
       );
+      state = List.of(state);
     }
   }
 
@@ -64,16 +43,16 @@ class TodoDataHolder extends InheritedWidget {
     if (result != null) {
       todo.title = result.text;
       todo.dueDate = result.dateTime;
-      notifier.notify();
+      state = List.of(state);
     }
   }
 
   void removeTodo(Todo todo) {
-    notifier.value.remove(todo);
-    notifier.notify();
+    state.remove(todo);
+    state = List.of(state);
   }
 }
 
-extension TodoDataHolderContextExtension on BuildContext {
-  TodoDataHolder get todoHolder => TodoDataHolder._of(this);
+extension TodoListHolderProvider on WidgetRef {
+  TodoDataHolder get readTodoHolder => read(todoDataProvider.notifier);
 }
