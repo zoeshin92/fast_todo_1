@@ -5,7 +5,8 @@ import 'package:fast_app_base/screen/main/write/d_write_todo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final todoDataProvider = StateNotifierProvider<TodoDataHolder, List<Todo>>(
-    (ref) => TodoDataHolder());
+  (ref) => TodoDataHolder(),
+);
 
 class TodoDataHolder extends StateNotifier<List<Todo>> {
   TodoDataHolder() : super([]);
